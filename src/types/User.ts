@@ -1,3 +1,5 @@
+import { Address } from "./Address";
+
 export type User = {
   id: string;
   firstName: string;
@@ -5,4 +7,5 @@ export type User = {
   email: string;
   phone: string;
   birthDate: string;
+  address: Address;
 };

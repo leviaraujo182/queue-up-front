@@ -1,8 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Navbar() {
+  const { user } = useAuthContext();
   const router = useRouter();
 
   return (
@@ -16,19 +19,30 @@ export default function Navbar() {
           QueueUp
         </div>
       </div>
-      <div className="flex gap-3">
-        <Button
-          variant="ghost"
-          onClick={() => {
-            router.push("/login");
-          }}
-        >
-          Login
-        </Button>
-        <Button onClick={() => router.push("/register")}>
-          Criar uma conta
-        </Button>
-      </div>
+      {user ? (
+        <div className="flex items-center gap-3">
+          <Button onClick={() => router.push("/registerEstablishment")}>
+            Criar um estabelecimento
+          </Button>
+          <div className="cursor-pointer">
+            <FaUserCircle size={35} />
+          </div>
+        </div>
+      ) : (
+        <div className="flex gap-3">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              router.push("/login");
+            }}
+          >
+            Login
+          </Button>
+          <Button onClick={() => router.push("/register")}>
+            Criar uma conta
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

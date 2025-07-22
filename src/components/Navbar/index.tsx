@@ -25,7 +25,10 @@ export default function Navbar() {
             Criar um estabelecimento
           </Button>
           <div className="cursor-pointer">
-            <FaUserCircle size={35} />
+            <FaUserCircle
+              size={35}
+              onClick={() => router.push("/dashboard/establishments")}
+            />
           </div>
         </div>
       ) : (

@@ -27,7 +27,7 @@ export default function Navbar() {
           <div className="cursor-pointer">
             <FaUserCircle
               size={35}
-              onClick={() => router.push("/dashboard/establishments")}
+              onClick={() => router.push("/administrative/dashboard")}
             />
           </div>
         </div>

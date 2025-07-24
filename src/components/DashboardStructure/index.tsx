@@ -13,15 +13,17 @@ import { FaRegClock } from "react-icons/fa";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { LuWrench } from "react-icons/lu";
 import { Card, CardHeader } from "../ui/card";
+import { useRouter } from "next/navigation";
 
 export const DashboardStructure = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const router = useRouter();
   return (
-    <div className="w-full h-full flex">
-      <div className="w-[15%] h-full border-r bg-[#f5f5f5] flex-1">
+    <div className="w-full h-screen flex">
+      <div className="w-[15%] h-full border-r bg-[#f5f5f5] ">
         <div className="p-6 flex items-center justify-center border-b">
           <div className="flex gap-2">
             <div className="p-5 bg-gradient-to-r from-blue-800 to-purple-600 rounded-md"></div>
@@ -38,10 +40,15 @@ export const DashboardStructure = ({
             <div>Menu Principal</div>
           </div>
           <div className="flex flex-col">
-            <DashboardMenuItem title="Dashboard" icon={<FiHome size={18} />} />
+            <DashboardMenuItem
+              title="Dashboard"
+              icon={<FiHome size={18} />}
+              onClick={() => router.push("/administrative/dashboard")}
+            />
             <DashboardMenuItem
               title="Meus estabelecimentos"
               icon={<LuBuilding size={18} />}
+              onClick={() => router.push("/administrative/establishments")}
             />
             <DashboardMenuItem
               title="Configurações"
@@ -54,14 +61,8 @@ export const DashboardStructure = ({
         <div className="w-full p-3 border-b">
           <BsLayoutSidebarInset size={22} className="cursor-pointer" />
         </div>
-        <div className="p-5 flex items-center justify-between border-b">
-          <div>
-            <div className="font-bold text-3xl">Barbearia do João</div>
-            <div>Barbearia</div>
-          </div>
-          <Badge label="Aberto" />
-        </div>
-        <div className="w-full h-[calc(100vh-170px)] bg-[#f8f8ff] gap-5 flex flex-col">
+
+        <div className="w-full bg-[#f8f8ff] gap-5 flex flex-col">
           {children}
         </div>
       </div>

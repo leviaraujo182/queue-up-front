@@ -1,4 +1,3 @@
-import { establishmentTypes } from "@/constants/establishmentContants";
 import * as yup from "yup";
 
 export const createEstablishmentSchema = yup.object({

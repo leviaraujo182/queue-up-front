@@ -17,10 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEstablishmentContext } from "@/contexts/establishmentContext";
 import { createEstablishmentSchema } from "@/schemas/establishmentSchema";
 import { Formik } from "formik";
 
 export default function RegisterEstablishment() {
+  const { createEstablishment, isLoading } = useEstablishmentContext();
+
   return (
     <div className="w-full items-center justify-center flex mt-5">
       <Card className="w-[45%] mb-10">
@@ -49,7 +52,22 @@ export default function RegisterEstablishment() {
             openHour: "",
             closeHour: "",
           }}
-          onSubmit={() => {}}
+          onSubmit={(values) => {
+            createEstablishment({
+              name: values.name,
+              phone: values.phone,
+              establishmentType: values.establishmentType,
+              openHour: values.openHour,
+              closeHour: values.closeHour,
+              establishmentAddress: {
+                zipCode: values.zipCode,
+                state: values.state,
+                city: values.city,
+                street: values.street,
+                neighborhood: values.neighborhood,
+              },
+            });
+          }}
         >
           {({ handleSubmit, handleChange, values, errors, setFieldValue }) => (
             <>
@@ -84,22 +102,22 @@ export default function RegisterEstablishment() {
                       <SelectValue placeholder="Tipo do estabelecimento" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="restaurante">Restaurante</SelectItem>
-                      <SelectItem value="bar">Bar</SelectItem>
-                      <SelectItem value="cafe">Café</SelectItem>
-                      <SelectItem value="padaria">Padaria</SelectItem>
-                      <SelectItem value="lanchonete">Lanchonete</SelectItem>
-                      <SelectItem value="pizzaria">Pizzaria</SelectItem>
-                      <SelectItem value="farmacia">Farmácia</SelectItem>
-                      <SelectItem value="laboratorio">Laboratório</SelectItem>
-                      <SelectItem value="clinica">Clínica</SelectItem>
-                      <SelectItem value="hospital">Hospital</SelectItem>
-                      <SelectItem value="banco">Banco</SelectItem>
-                      <SelectItem value="cartorio">Cartório</SelectItem>
-                      <SelectItem value="mercado">Mercado</SelectItem>
-                      <SelectItem value="lotérica">Lotérica</SelectItem>
-                      <SelectItem value="petshop">Pet Shop</SelectItem>
-                      <SelectItem value="outro">Outro</SelectItem>
+                      <SelectItem value="Restaurant">Restaurante</SelectItem>
+                      <SelectItem value="Bar">Bar</SelectItem>
+                      <SelectItem value="Cafe">Café</SelectItem>
+                      <SelectItem value="Bakery">Padaria</SelectItem>
+                      <SelectItem value="SnackBar">Lanchonete</SelectItem>
+                      <SelectItem value="Pizzeria">Pizzaria</SelectItem>
+                      <SelectItem value="Pharmacy">Farmácia</SelectItem>
+                      <SelectItem value="Laboratory">Laboratório</SelectItem>
+                      <SelectItem value="Clinic">Clínica</SelectItem>
+                      <SelectItem value="Hospital">Hospital</SelectItem>
+                      <SelectItem value="Bank">Banco</SelectItem>
+                      <SelectItem value="Notary">Cartório</SelectItem>
+                      <SelectItem value="Market">Mercado</SelectItem>
+                      <SelectItem value="Lottery">Lotérica</SelectItem>
+                      <SelectItem value="PetShop">Pet Shop</SelectItem>
+                      <SelectItem value="Other">Outro</SelectItem>
                     </SelectContent>
                   </Select>
                   <Input
@@ -202,7 +220,8 @@ export default function RegisterEstablishment() {
               </CardContent>
               <CardFooter>
                 <GradientButton
-                  onClick={handleSubmit}
+                  isLoading={isLoading}
+                  onClick={() => handleSubmit()}
                   label="Cadastrar estabelecimento"
                 />
               </CardFooter>

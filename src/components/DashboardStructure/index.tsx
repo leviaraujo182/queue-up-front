@@ -53,6 +53,7 @@ export const DashboardStructure = ({
             <DashboardMenuItem
               title="Configurações"
               icon={<LuSettings2 size={18} />}
+              onClick={() => router.push("/administrative/configuration")}
             />
           </div>
         </div>
@@ -61,7 +62,6 @@ export const DashboardStructure = ({
         <div className="w-full p-3 border-b">
           <BsLayoutSidebarInset size={22} className="cursor-pointer" />
         </div>
-
         <div className="w-full bg-[#f8f8ff] gap-5 flex flex-col">
           {children}
         </div>

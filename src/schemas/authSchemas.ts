@@ -14,6 +14,7 @@ export const registerSchema = yup.object({
   lastName: yup.string().required("O campo de Sobrenome é obrigatório"),
   email: yup.string().email().required("O campo de email é obrigatório"),
   phone: yup.string().required("O campo de telefone é obrigatório"),
+  accountType: yup.string().required("O tipo de usuário é obrigatório"),
   birthDate: yup
     .string()
     .required("O campo de data de nascimento é obrigatório"),

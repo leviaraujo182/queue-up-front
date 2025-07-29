@@ -9,7 +9,7 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <div className="p-5 shadow-md flex justify-between bg-white">
+    <div className="p-5 shadow-md flex justify-between bg-white fixed top-0 left-0 right-0 z-50">
       <div className="flex gap-2">
         <div className="p-5 bg-gradient-to-r from-blue-800 to-purple-600 rounded-md"></div>
         <div
@@ -18,6 +18,16 @@ export default function Navbar() {
         >
           QueueUp
         </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          onClick={() => router.push("/establishmentList")}
+        >
+          Estabelecimentos
+        </Button>
+        <Button variant="ghost">Como funciona</Button>
+        <Button variant="ghost">Contato</Button>
       </div>
       {user ? (
         <div className="flex items-center gap-3">
@@ -34,7 +44,7 @@ export default function Navbar() {
       ) : (
         <div className="flex gap-3">
           <Button
-            variant="ghost"
+            variant="outline"
             onClick={() => {
               router.push("/login");
             }}

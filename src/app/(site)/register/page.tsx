@@ -11,6 +11,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuthContext } from "@/contexts/authContext";
 import { CreateUserDto } from "@/dtos/CreateUserDto";
 import { registerSchema } from "@/schemas/authSchemas";
@@ -26,7 +33,7 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-start justify-center h-[90vh] mb-35">
+    <div className="flex items-start justify-center h-[90vh] mt-5">
       <Card className="w-[50%] flex flex-col justify-center">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-center w-full">
@@ -43,6 +50,7 @@ export default function Register() {
               firstName: values.firstName,
               lastName: values.lastName,
               email: values.email,
+              accountType: values.accountType,
               phone: values.phone,
               birthDate: values.birthDate,
               address: {
@@ -59,6 +67,7 @@ export default function Register() {
             firstName: "",
             lastName: "",
             email: "",
+            accountType: "",
             phone: "",
             birthDate: "",
             zipCode: "",
@@ -70,7 +79,7 @@ export default function Register() {
             confirmPassword: "",
           }}
         >
-          {({ handleChange, errors, values, handleSubmit }) => (
+          {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
             <>
               <CardContent className="flex flex-col gap-5">
                 <div className="flex gap-3 flex-col">
@@ -113,6 +122,25 @@ export default function Register() {
                       onChange={handleChange}
                       errorMessage={errors.phone}
                     />
+                  </div>
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <Select
+                      name="accountType"
+                      onValueChange={(e) => setFieldValue("accountType", e)}
+                    >
+                      <SelectTrigger
+                        label="Tipo de usuário"
+                        errorMessage={errors.accountType}
+                      >
+                        <SelectValue placeholder="Selecione o seu tipo de usuário" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Client">Cliente</SelectItem>
+                        <SelectItem value="Owner">
+                          Dono de estabelecimento
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input

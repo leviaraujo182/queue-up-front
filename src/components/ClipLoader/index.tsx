@@ -2,10 +2,18 @@
 
 import { PulseLoader } from "react-spinners";
 
-export const ClipLoader = () => {
+type ClipLoaderProps = {
+  color?: "purple" | "white";
+  size?: number;
+};
+
+export const ClipLoader = ({ color, size }: ClipLoaderProps) => {
   return (
-    <div className="flex items-center justify-center">
-      <PulseLoader color="#fff" size={8} />
+    <div className="flex items-center">
+      <PulseLoader
+        color={color === "purple" ? "#812ad2" : "#fff"}
+        size={size || 8}
+      />
     </div>
   );
 };

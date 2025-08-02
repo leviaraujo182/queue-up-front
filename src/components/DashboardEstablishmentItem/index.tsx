@@ -9,29 +9,38 @@ import {
 import { MdOutlineLocationOn } from "react-icons/md";
 import { FaRegClock } from "react-icons/fa";
 import { GradientButton } from "../GradientButton";
+import { Establishment } from "@/types/Establishment";
+import { StatusBadge } from "../StatusBadge";
 
-export const DashboardEstablishmentItem = () => {
+type EstablishmentItemProps = {
+  establishment: Establishment;
+};
+
+export const DashboardEstablishmentItem = ({
+  establishment,
+}: EstablishmentItemProps) => {
   return (
-    <Card className="max-w-[350px] max-h-[290px]">
+    <Card className="min-w-[470px] max-h-[290px]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl">Teste</CardTitle>
+            <CardTitle className="text-2xl">{establishment.name}</CardTitle>
             <CardDescription>Barbearia</CardDescription>
           </div>
-          <div className="p-1 pl-2 pr-2 text-center border border-gray-400 text-[0.8rem] rounded-lg font-[500]">
-            Barbearia
-          </div>
+          <StatusBadge
+            status={establishment.isActive ? "active" : "inactive"}
+          />
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <MdOutlineLocationOn size={20} className="text-gray-500" />
-          Localizacao
+          {establishment.establishmentAddress.city},{" "}
+          {establishment.establishmentAddress.state}
         </div>
         <div className="flex items-center gap-2">
           <FaRegClock size={20} className="text-gray-500" />
-          07:00 - 22:00
+          {establishment.openHour} - {establishment.closeHour}
         </div>
         <div>Descricao</div>
       </CardContent>

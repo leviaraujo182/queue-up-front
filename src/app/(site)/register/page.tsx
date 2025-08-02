@@ -33,8 +33,8 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-start justify-center h-[90vh] mt-5">
-      <Card className="w-[50%] flex flex-col justify-center">
+    <div className="flex items-start justify-center h-[100vh] mt-25">
+      <Card className="w-[50%] flex flex-col justify-center mb-30">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-center w-full">
             Crie sua conta

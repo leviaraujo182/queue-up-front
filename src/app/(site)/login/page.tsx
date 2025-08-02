@@ -55,6 +55,7 @@ export default function Login() {
               />
               <Input
                 value={values.password}
+                type="password"
                 name="password"
                 label="Senha"
                 errorMessage={errors.password}

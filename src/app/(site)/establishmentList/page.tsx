@@ -14,7 +14,7 @@ import { LuFilter } from "react-icons/lu";
 export default function EstablishmentList() {
   return (
     <div className="p-10">
-      <Card className="w-full p-5">
+      <Card className="w-full p-5 gap-2">
         <CardHeader className="gap-0">
           <div className="flex items-center gap-2">
             <LuFilter size={23} className="text-gray-500" />

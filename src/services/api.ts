@@ -1,15 +1,16 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-});
-
-api.interceptors.request.use((config) => {
+export async function fetchWithAuth(
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<Response> {
   const token = localStorage.getItem("token");
+  const headers = new Headers(init?.headers);
 
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
 
-  return config;
-});
-
-export default api;
+  return window.fetch(input, {
+    ...init,
+    headers,
+  });
+}

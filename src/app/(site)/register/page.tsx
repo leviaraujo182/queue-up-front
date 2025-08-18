@@ -19,18 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuthContext } from "@/contexts/authContext";
-import { CreateUserDto } from "@/dtos/CreateUserDto";
+import { useCreateUser } from "@/hooks/useUser";
 import { registerSchema } from "@/schemas/authSchemas";
 import { Formik } from "formik";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
-  const { createUser, isLoading } = useAuthContext();
   const router = useRouter();
-
-  const handleCreateUser = (createUserDto: CreateUserDto) => {
-    createUser(createUserDto);
-  };
+  const createUser = useCreateUser();
 
   return (
     <div className="flex items-start justify-center h-[100vh] mt-25">
@@ -46,7 +42,7 @@ export default function Register() {
         <Formik
           validationSchema={registerSchema}
           onSubmit={(values) =>
-            handleCreateUser({
+            createUser.mutate({
               firstName: values.firstName,
               lastName: values.lastName,
               email: values.email,
@@ -85,7 +81,7 @@ export default function Register() {
                 <div className="flex gap-3 flex-col">
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       value={values.firstName}
                       placeholder="Seu primeiro nome"
                       name="firstName"
@@ -94,7 +90,7 @@ export default function Register() {
                       onChange={handleChange}
                     />
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       value={values.lastName}
                       placeholder="Seu último nome"
                       name="lastName"
@@ -105,7 +101,7 @@ export default function Register() {
                   </div>
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="E-mail"
                       placeholder="exemplo@exemplo.com"
                       name="email"
@@ -114,7 +110,7 @@ export default function Register() {
                       errorMessage={errors.email}
                     />
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Telefone"
                       placeholder="(88) 99999-99999"
                       name="phone"
@@ -144,7 +140,7 @@ export default function Register() {
                   </div>
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Data de Nascimento"
                       placeholder="01/01/2000"
                       type="date"
@@ -154,7 +150,7 @@ export default function Register() {
                       errorMessage={errors.birthDate}
                     />
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="CEP"
                       placeholder="00000-00000"
                       name="zipCode"
@@ -165,7 +161,7 @@ export default function Register() {
                   </div>
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Cidade"
                       placeholder="Ex: Fortaleza"
                       name="city"
@@ -174,7 +170,7 @@ export default function Register() {
                       errorMessage={errors.city}
                     />
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Estado"
                       placeholder="Ex: CE"
                       name="state"
@@ -185,7 +181,7 @@ export default function Register() {
                   </div>
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Rua"
                       name="street"
                       placeholder="Ex: Rua das flores"
@@ -194,7 +190,7 @@ export default function Register() {
                       errorMessage={errors.street}
                     />
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Bairro"
                       name="neighborhood"
                       placeholder="Ex: Centro"
@@ -205,7 +201,7 @@ export default function Register() {
                   </div>
                   <div className="flex w-full items-center justify-between gap-2">
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Senha"
                       placeholder="*********"
                       name="password"
@@ -214,7 +210,7 @@ export default function Register() {
                       errorMessage={errors.password}
                     />
                     <Input
-                      disabled={isLoading}
+                      disabled={createUser.isPending}
                       label="Confirmar Senha"
                       placeholder="*********"
                       name="confirmPassword"
@@ -228,7 +224,7 @@ export default function Register() {
               <CardFooter className="flex flex-col gap-5">
                 <GradientButton
                   label="Criar conta"
-                  isLoading={isLoading}
+                  isLoading={createUser.isPending}
                   onClick={handleSubmit}
                 />
                 <div className="flex gap-1">

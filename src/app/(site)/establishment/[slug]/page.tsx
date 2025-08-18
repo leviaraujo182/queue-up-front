@@ -16,16 +16,22 @@ import { IoMdPeople } from "react-icons/io";
 import { Input } from "@/components/ui/input";
 import { Warning } from "@/components/Warning";
 import { GradientButton } from "@/components/GradientButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Info } from "@/components/Info";
 import { Button } from "@/components/ui/button";
+import { useParams } from "next/navigation";
+import { useEstablishmentById } from "@/hooks/useEstablishment";
 
-export default function Establishment() {
+export default function EstablishmentSlug() {
+  const params = useParams();
+  const slug = params.slug;
+
+  const { data, isLoading } = useEstablishmentById(slug as string);
   const [isRegisteredOnQueue, setIsRegisteredOnQueue] = useState<boolean>(true);
 
   return (
-    <div className="flex w-full items-center justify-center h-full ">
-      <div className="w-[50%] flex flex-col gap-5">
+    <div className="flex w-full items-center justify-center h-full mt-30 ">
+      <div className="w-[70%] flex flex-col gap-5">
         <Card className="w-full">
           <CardHeader>
             <CardTitle
@@ -63,8 +69,8 @@ export default function Establishment() {
             </div>
           </CardContent>
         </Card>
-        <div className="flex justify-around">
-          <Card className="min-w-[310px]">
+        <div className="flex gap-5">
+          <Card className="w-full">
             <CardHeader>
               <CardTitle
                 rightElement={
@@ -76,7 +82,7 @@ export default function Establishment() {
             </CardHeader>
             <CardContent className="font-[700] text-3xl">3</CardContent>
           </Card>
-          <Card className="min-w-[310px]">
+          <Card className="w-full">
             <CardHeader>
               <CardTitle
                 rightElement={
@@ -88,7 +94,7 @@ export default function Establishment() {
             </CardHeader>
             <CardContent className="font-[700] text-3xl">15 min</CardContent>
           </Card>
-          <Card className="min-w-[310px]">
+          <Card className="w-full">
             <CardHeader>
               <CardTitle rightElement={<Badge label="Aberto" />}>
                 <div>Status</div>

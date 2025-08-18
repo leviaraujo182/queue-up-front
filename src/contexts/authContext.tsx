@@ -2,16 +2,15 @@
 
 import { CreateUserDto } from "@/dtos/CreateUserDto";
 import { LoginDto } from "@/dtos/LoginDto";
-import api from "@/services/api";
 import { User } from "@/types/User";
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
+import { fetchWithAuth } from "@/services/api";
 
 type AuthContextType = {
   user: User | null;
   login: (loginDto: LoginDto) => void;
-  createUser: (createUserDto: CreateUserDto) => void;
   isLoading: boolean;
 };
 
@@ -31,8 +30,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getUserById = async (userId: string) => {
     try {
-      const response = await api.get<User>(`/User/${userId}`);
-      return response.data;
+      const response = await fetchWithAuth(`/User/${userId}`, {
+        method: "GET",
+      });
+
+      const userData = await response.json();
+      return userData;
     } catch {
       console.error("Failed to fetch user data");
       setUser(null);
@@ -43,11 +46,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
 
-      const response = await api.post("/Auth/", loginDto);
-      localStorage.setItem("token", response.data.token);
+      const response = await fetch("/Auth/", {
+        method: "POST",
+        body: JSON.stringify(loginDto),
+      });
 
-      const userId = jwtDecode<{ userId: string }>(response.data.token).userId;
+      const data = await response.json();
+
+      localStorage.setItem("token", data.token);
+
+      const userId = jwtDecode<{ userId: string }>(data.token).userId;
       const userData = await getUserById(userId);
+
       setUser(userData || null);
 
       localStorage.setItem("user", JSON.stringify(userData));
@@ -60,20 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createUser = async (createUserDto: CreateUserDto) => {
-    try {
-      setIsLoading(true);
-      const response = await api.post<User>("/User/", createUserDto);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, createUser, isLoading }}>
+    <AuthContext.Provider value={{ user, login, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

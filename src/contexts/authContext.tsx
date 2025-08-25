@@ -6,7 +6,7 @@ import { User } from "@/types/User";
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
-import { fetchWithAuth } from "@/services/api";
+import { fetchWithAuth, fetchWithoutAuth } from "@/services/api";
 
 type AuthContextType = {
   user: User | null;
@@ -46,9 +46,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
 
-      const response = await fetch("/Auth/", {
+      const response = await fetchWithoutAuth("/Auth/", {
         method: "POST",
         body: JSON.stringify(loginDto),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       const data = await response.json();

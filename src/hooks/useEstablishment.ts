@@ -1,5 +1,6 @@
 import { CreateEstablishmentDto } from "@/dtos/CreateEstablishmentDto";
 import { fetchWithAuth } from "@/services/api";
+import { Establishment } from "@/types/Establishment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useUserEstablishments() {
@@ -30,7 +31,7 @@ export function useEstablishmentMetrics() {
   });
 }
 
-export function useEstablishmentById(id: string) {
+export function useGetEstablishmentById(id: string | null) {
   return useQuery({
     queryKey: ["establishmentById", id],
     queryFn: async () => {
@@ -57,6 +58,42 @@ export function useCreateEstablishment() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userEstablishments"] });
+    },
+  });
+}
+
+export function useGetEstablishmentDashboardMetrics(
+  establishmentId: string | null
+) {
+  return useQuery({
+    queryKey: ["getEstablishmentDashboard"],
+    queryFn: async () => {
+      const response = await fetchWithAuth(
+        `/Establishment/${establishmentId}/GetEstablishmentDashboard`
+      );
+
+      return await response.json();
+    },
+    enabled: !!establishmentId,
+  });
+}
+
+export function useGetUserEstablishments() {
+  const filters = new URLSearchParams({
+    pageSize: "10",
+    pageNumber: "1",
+  }).toString();
+
+  return useQuery<Establishment[]>({
+    queryKey: ["getUserEstablishments"],
+    queryFn: async () => {
+      const response = await fetchWithAuth(
+        `/Establishment/GetEstablishmentsByOwner?${filters}`,
+        {
+          method: "GET",
+        }
+      );
+      return await response.json();
     },
   });
 }

@@ -1,3 +1,5 @@
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export async function fetchWithAuth(
   input: RequestInfo,
   init?: RequestInit
@@ -9,7 +11,29 @@ export async function fetchWithAuth(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  return window.fetch(input, {
+  const url =
+    typeof input === "string" && !input.startsWith("http")
+      ? `${baseURL}${input}`
+      : input;
+
+  return window.fetch(url, {
+    ...init,
+    headers,
+  });
+}
+
+export async function fetchWithoutAuth(
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<Response> {
+  const headers = new Headers(init?.headers);
+
+  const url =
+    typeof input === "string" && !input.startsWith("http")
+      ? `${baseURL}${input}`
+      : input;
+
+  return window.fetch(url, {
     ...init,
     headers,
   });

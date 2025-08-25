@@ -8,6 +8,9 @@ export function useCreateUser() {
       await fetchWithAuth("/User/", {
         method: "POST",
         body: JSON.stringify(createUserDto),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
     },
   });

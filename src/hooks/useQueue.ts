@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { QueryClient } from "@tanstack/react-query";
 import { QueueUser } from "@/types/QueueUser";
+import { useEffect, useState } from "react";
 
 export function useEnterQueue() {
   const queryClient = useQueryClient();
@@ -58,10 +59,13 @@ export function useLeaveQueue() {
 }
 
 export function useGetQueueUsers(queueId: string) {
+  const queryClient = useQueryClient();
   return useQuery<QueueUser[]>({
-    queryKey: ["getQueueUsers"],
+    queryKey: ["getQueueUsers", queueId],
     queryFn: async () => {
       const response = await fetchWithAuth(`/Queue/${queueId}/GetQueueUsers`);
+
+      if (response.status == 200) startConnection(queueId, queryClient);
 
       return await response.json();
     },
@@ -132,4 +136,23 @@ const startConnection = (queueId: string, queryClient: QueryClient) => {
   connection.on("UpdateQueuePositions", (queueId) => {
     queryClient.invalidateQueries({ queryKey: ["getQueueUser", queueId] });
   });
+
+  connection.on("UpdateDashboardQueue", (queueId) => {
+    queryClient.invalidateQueries({
+      queryKey: ["getQueueUsers", queueId],
+    });
+  });
 };
+
+export function useElapsedMinutes(position: number) {
+  const [minutes, setMinutes] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMinutes((prev) => prev + 1);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [position]);
+
+  return minutes;
+}

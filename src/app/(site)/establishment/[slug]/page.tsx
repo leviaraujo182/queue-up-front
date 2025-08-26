@@ -27,11 +27,13 @@ import {
 import { getEstablishmentNameByType } from "@/utils/getEstablishmentNameByType";
 import { formatPhone } from "@/utils/formatPhone";
 import {
+  useElapsedMinutes,
   useEnterQueue,
   useGetQueueUser,
   useLeaveQueue,
 } from "@/hooks/useQueue";
 import { ClipLoader } from "@/components/ClipLoader";
+import { motion } from "framer-motion";
 
 export default function EstablishmentSlug() {
   const params = useParams();
@@ -41,10 +43,7 @@ export default function EstablishmentSlug() {
   const leaveQueue = useLeaveQueue();
   const { data: queueUserData } = useGetQueueUser(data?.queueId);
   const enterQueue = useEnterQueue();
-
-  useEffect(() => {
-    console.log("QueueUserData atualizado:", queueUserData);
-  }, [queueUserData]);
+  const elapsedTime = useElapsedMinutes(queueUserData?.position);
 
   return (
     <div className="flex w-full items-center justify-center h-full mt-30 ">
@@ -136,23 +135,94 @@ export default function EstablishmentSlug() {
                 </CardHeader>
                 <CardContent className="h-[220px] flex flex-col items-center justify-center">
                   <div className="flex items-center justify-center flex-col gap-2">
-                    <div className="p-10 flex items-center justify-center text-5xl font-[600] text-white bg-gradient-to-r from-blue-800 to-purple-600 w-[110px] h-[110px] rounded-full">
-                      {queueUserData?.position}
+                    <div className="relative flex items-center justify-center w-[110px] h-[110px]">
+                      {queueUserData.startDate == null && (
+                        <motion.div
+                          className="absolute w-[120px] h-[120px] rounded-full border-4 border-purple-500 z-0"
+                          style={{
+                            borderTopColor: "#7c3aed",
+                            borderRightColor: "#e9d5ff",
+                            borderBottomColor: "#e9d5ff",
+                            borderLeftColor: "#e9d5ff",
+                            borderStyle: "solid",
+                            borderWidth: "4px",
+                          }}
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1.2,
+                            ease: "linear",
+                          }}
+                        />
+                      )}
+                      {queueUserData.startDate != null && (
+                        <motion.div
+                          className="absolute w-[120px] h-[120px] rounded-full z-0"
+                          initial={{ scale: 0.95, opacity: 1 }}
+                          animate={{
+                            scale: [0.95, 1.05, 0.95],
+                            opacity: [1, 0.85, 1],
+                          }}
+                          transition={{
+                            duration: 1.2,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          }}
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #22dd46 0%, #23dd64 100%)",
+                            boxShadow: "0 0 30px 0 #22dd4680",
+                          }}
+                        />
+                      )}
+                      <div
+                        className={`p-10 flex items-center justify-center text-5xl font-[600] text-white w-[110px] h-[110px] rounded-full relative z-10 ${
+                          queueUserData.startDate != null
+                            ? "bg-gradient-to-r from-green-500 to-green-300"
+                            : "bg-gradient-to-r from-blue-800 to-purple-600"
+                        }`}
+                      >
+                        {queueUserData?.position}
+                      </div>
                     </div>
-                    <div className="text-center text-2xl font-[700]">
-                      Sua posição na fila
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="text-gray-600">Útima atualização há</div>
-                      <div className="font-[600]">1 minuto</div>
-                    </div>
-                    <div className="mt-2">
-                      <ClipLoader color="purple" size={12} />
-                    </div>
+                    {queueUserData.startDate != null ? (
+                      <div className="text-center  mt-5 flex flex-col">
+                        <span className="text-3xl font-[700]">
+                          Chegou a sua vez!
+                        </span>
+                        <span>
+                          Se direcione ao estabelecimento para ser atendido.
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-center text-2xl font-[700] mt-5">
+                          Sua posição na fila
+                        </div>
+                        <div className="flex gap-1">
+                          <div className="text-gray-600">
+                            Útima atualização há
+                          </div>
+                          <div className="font-[600]">
+                            {elapsedTime} minuto{elapsedTime !== 1 ? "s" : ""}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
-                  <Info text="Você receberá uma notificação quando for sua vez. Mantenha esta página aberta ou salve o link nos favoritos." />
+                  {queueUserData.startDate != null ? (
+                    <Warning
+                      type="error"
+                      text="Dirija-se o mais rápido possível até o endereço do estabelecimento. Caso contrário, o administrador poderá chamar o próxim"
+                    />
+                  ) : (
+                    <Warning
+                      type="info"
+                      text="Você receberá uma notificação quando for sua vez. Mantenha esta página aberta ou salve o link nos favoritos."
+                    />
+                  )}
                   <Button
                     className="w-full text-red-500"
                     variant="outline"

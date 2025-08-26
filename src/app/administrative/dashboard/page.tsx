@@ -87,7 +87,7 @@ export default function Dashboard() {
               <SelectValue placeholder="Selecione um estabelecimento" />
             </SelectTrigger>
             <SelectContent>
-              {establishmentsListData.map((establishment) => (
+              {establishmentsListData?.map((establishment) => (
                 <SelectItem key={establishment.id} value={establishment.id}>
                   {establishment.name}
                 </SelectItem>
@@ -158,6 +158,7 @@ export default function Dashboard() {
                     <div>
                       <GradientButton
                         label={"Chamar proximo"}
+                        disabled={queueUsersData.length === 0}
                         isLoading={callNextInQueue.isPending}
                         onClick={() =>
                           callNextInQueue.mutate(establishmentData.queueId)
@@ -166,7 +167,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="overflow-y-auto flex flex-col gap-2">
+                <CardContent className="overflow-y-auto h-full flex flex-col gap-2">
                   <AnimatePresence>
                     {queueUsersData && queueUsersData.length > 0 ? (
                       queueUsersData.map((queueUser, index) => (
@@ -190,8 +191,10 @@ export default function Dashboard() {
                         </motion.div>
                       ))
                     ) : (
-                      <div className="text-gray-500">
-                        Nenhum cliente na fila no momento
+                      <div className="flex h-full items-center justify-center ">
+                        <span className="text-gray-500 text-2xl">
+                          Nenhum cliente na fila no momento
+                        </span>
                       </div>
                     )}
                   </AnimatePresence>
@@ -238,14 +241,15 @@ export default function Dashboard() {
                   <CardContent className="flex items-center justify-between">
                     <div className="bg-gray-200 rounded-md w-full p-2 flex justify-between items-center">
                       <div className="text-gray-800 font-[500]">
-                        https://fila.exemplo.com
+                        {process.env.NEXT_PUBLIC_FRONTEND_URL}/establishment/
+                        {establishmentData?.id}
                       </div>
                       <IoCopy
                         size={24}
                         className="text-gray-500 cursor-pointer hover:text-gray-700 transition ease-in-out duration-200"
                         onClick={() =>
                           navigator.clipboard.writeText(
-                            "https://fila.exemplo.com"
+                            `${process.env.NEXT_PUBLIC_FRONTEND_URL}/establishment/${establishmentData?.id}`
                           )
                         }
                       />

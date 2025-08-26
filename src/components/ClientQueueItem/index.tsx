@@ -35,12 +35,11 @@ export const ClientQueueItem = (props: ClientQueueItemProps) => {
       className="w-full flex p-5 border items-center justify-between rounded-md cursor-pointer"
       style={{
         background: props.isCurrent
-          ? `linear-gradient(90deg, #2edd46d1 ${fill}%, #fff ${fill}%)`
+          ? `linear-gradient(90deg, #26ed40fb ${fill}%, #fff ${fill}%)`
           : "#fff",
-        transition: "background 0.8s", // transição mais lenta
+        transition: "background 0.8s",
       }}
     >
-      {/* ...restante do conteúdo... */}
       <div className="rounded-md flex items-center gap-5">
         <div className="w-[35px] h-[35px] bg-gray-400 text-white items-center justify-center flex rounded-full">
           {props.queueUserData.position}

@@ -3,6 +3,7 @@ import { fetchWithAuth } from "@/services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { QueryClient } from "@tanstack/react-query";
+import { QueueUser } from "@/types/QueueUser";
 
 export function useEnterQueue() {
   const queryClient = useQueryClient();
@@ -52,6 +53,69 @@ export function useLeaveQueue() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getQueueUser"] });
+    },
+  });
+}
+
+export function useGetQueueUsers(queueId: string) {
+  return useQuery<QueueUser[]>({
+    queryKey: ["getQueueUsers"],
+    queryFn: async () => {
+      const response = await fetchWithAuth(`/Queue/${queueId}/GetQueueUsers`);
+
+      return await response.json();
+    },
+    enabled: !!queueId,
+  });
+}
+
+export function useRemoveFromQueue() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      queueId,
+    }: {
+      userId: string;
+      queueId: string;
+    }) => {
+      const body = { userId };
+      const response = await fetchWithAuth(
+        `/Queue/${queueId}/RemoveFromQueue`,
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getQueueUsers"] });
+    },
+  });
+}
+
+export function useCallNextInQueue() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (queueId: string) => {
+      const response = await fetchWithAuth(
+        `/Queue/${queueId}/StartNextQueueUser`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getQueueUsers"] });
     },
   });
 }

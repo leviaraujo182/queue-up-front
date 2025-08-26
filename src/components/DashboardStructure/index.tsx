@@ -62,7 +62,7 @@ export const DashboardStructure = ({
         <div className="w-full p-3 border-b">
           <BsLayoutSidebarInset size={22} className="cursor-pointer" />
         </div>
-        <div className="w-full bg-[#f8f8ff] gap-5 flex flex-col">
+        <div className="w-full h-[calc(100vh-80px)] bg-[#f8f8ff] gap-5 flex flex-col">
           {children}
         </div>
       </div>

@@ -16,7 +16,6 @@ import { FaRegClock } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { LuWrench } from "react-icons/lu";
 import { IoCopy } from "react-icons/io5";
-import { Badge } from "@/components/Badge";
 import {
   Select,
   SelectContent,
@@ -29,9 +28,15 @@ import {
   useGetEstablishmentDashboardMetrics,
   useGetUserEstablishments,
 } from "@/hooks/useEstablishment";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { getEstablishmentNameByType } from "@/utils/getEstablishmentNameByType";
 import { formatPhone } from "@/utils/formatPhone";
+import {
+  useCallNextInQueue,
+  useGetQueueUsers,
+  useRemoveFromQueue,
+} from "@/hooks/useQueue";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Dashboard() {
   const [selectedEstablishment, setSelectedEstablishment] = useState<
@@ -41,10 +46,14 @@ export default function Dashboard() {
   const { data: establishmentsListData = [] } = useGetUserEstablishments();
   const { data: metricsData, isLoading: isLoadingMetrics } =
     useGetEstablishmentDashboardMetrics(selectedEstablishment);
-
   const { data: establishmentData } = useGetEstablishmentById(
     selectedEstablishment
   );
+  const { data: queueUsersData = [] } = useGetQueueUsers(
+    establishmentData?.queueId
+  );
+  const removeFromQueue = useRemoveFromQueue();
+  const callNextInQueue = useCallNextInQueue();
 
   const saveLocalEstablishmentId = (id: string) => {
     if (id) localStorage.setItem("selectedEstablishment", id);
@@ -60,7 +69,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="w-full h-full ">
+    <div className="w-full">
       <div className="p-5 bg-white flex items-center justify-between border-b">
         <div>
           <div className="font-bold text-3xl">{establishmentData?.name}</div>
@@ -90,7 +99,6 @@ export default function Dashboard() {
       <div className="p-5 gap-5 flex flex-col">
         {selectedEstablishment ? (
           <>
-            {" "}
             <div className="flex gap-5">
               <CardInfo
                 title="Clientes na fila"
@@ -137,7 +145,7 @@ export default function Dashboard() {
                 }
               />
             </div>
-            <div className="flex gap-5 h-full">
+            <div className="flex gap-5 h-[calc(100vh-400px)]">
               <Card className="flex-1">
                 <CardHeader className="gap-0">
                   <div className="flex justify-between">
@@ -148,24 +156,54 @@ export default function Dashboard() {
                       </CardDescription>
                     </div>
                     <div>
-                      <GradientButton label={"Chamar proximo"} />
+                      <GradientButton
+                        label={"Chamar proximo"}
+                        isLoading={callNextInQueue.isPending}
+                        onClick={() =>
+                          callNextInQueue.mutate(establishmentData.queueId)
+                        }
+                      />
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="overflow-y-auto h-[calc(100vh-500px)] flex flex-col gap-2">
-                  <ClientQueueItem />
-                  <ClientQueueItem />
-                  <ClientQueueItem />
-                  <ClientQueueItem />
+                <CardContent className="overflow-y-auto flex flex-col gap-2">
+                  <AnimatePresence>
+                    {queueUsersData && queueUsersData.length > 0 ? (
+                      queueUsersData.map((queueUser, index) => (
+                        <motion.div
+                          key={queueUser.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, x: 100 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <ClientQueueItem
+                            isCurrent={queueUser.startDate != null}
+                            queueUserData={queueUser}
+                            onRemove={() =>
+                              removeFromQueue.mutate({
+                                userId: queueUser.user.id,
+                                queueId: queueUser.queueId,
+                              })
+                            }
+                          />
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500">
+                        Nenhum cliente na fila no momento
+                      </div>
+                    )}
+                  </AnimatePresence>
                 </CardContent>
               </Card>
               <div className="flex-1 flex flex-col gap-2">
-                <Card className="">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-2xl">
                       Dados do estabelecimento
                     </CardTitle>
-                    <CardContent className="p-0 flex flex-col gap-1">
+                    <CardContent className="p-0 flex justify-between">
                       <div>
                         <div className="text-gray-700">Endereço</div>
                         <div className="font-[600]">
